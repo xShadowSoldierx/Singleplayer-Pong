@@ -3,68 +3,142 @@ import random
 
 
 pygame.init()
-game_W = 500
-game_H = 500
-screen = pygame.display.set_mode([game_W, game_H])
+GAME_W = 500
+GAME_H = 500
+SCREEN = pygame.display.set_mode([GAME_W, GAME_H])
 
-rect_W = 100
-rect_H = 10
-rect_X = 200
-rect_Y = 490
-rect_Speed = 1.7
 
-circle_R = 50
-circle_X = random.randint(circle_R, game_W)
-circle_Y = 250
-circle_Speed_X = .1
-circle_Speed_Y = .05
-
-pygame.key.set_repeat(1, 5)
-
-running = True
-while running:
-    # Increase difficulty over time
-    circle_Speed_Y *= 1.000075
-    rect_Speed *= 1.000025
-    
-    # Collision
-    rect_collision_start_X = rect_X
-    rect_collision_end_X = rect_X + rect_W
-    
-    # Game control
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                if rect_X > 0:
-                    rect_X -= rect_Speed
-            if event.key == pygame.K_RIGHT:
-                if rect_X < (game_W - rect_W):
-                    rect_X += rect_Speed
-    
-    # Ball movement in x direction
-    circle_X += circle_Speed_X
-    if circle_X > (game_W - circle_R):
-        circle_Speed_X = -circle_Speed_X
-    elif circle_X < circle_R:
-        circle_Speed_X = -circle_Speed_X
+class Rectangle():
+    def __init__(self, height: float, width: float,
+                 x_coordinate: float, y_coordinate: float,
+                 color: tuple,
+                 speed_x: float = 0.0, speed_y: float = 0.0):
         
-    # Ball movement in y direction
-    circle_Y += circle_Speed_Y
-    if circle_Y > (game_H - circle_R - rect_H):
-        if circle_X >= rect_collision_start_X and circle_X <= rect_collision_end_X:
-            circle_Speed_Y = -circle_Speed_Y
-        else: break
-    elif circle_Y < circle_R:
-        circle_Speed_Y = -circle_Speed_Y
-
-    screen.fill((255, 255, 255))
+        self.height = height
+        self.width = width
         
-    pygame.draw.circle(screen, (0, 0, 255), (circle_X, circle_Y), circle_R)
+        self.x = x_coordinate
+        self.y = y_coordinate
+        
+        self.color = color
+        
+        self.speed_x = speed_x
+        self.speed_y = speed_y
     
-    pygame.draw.rect(screen, (240, 0, 30), (rect_X, rect_Y, rect_W, rect_H))
-    
-    pygame.display.update()
+    def moving_x(self, direction: str = 'right'):
+        if direction.lower() == 'right':
+            self.x += self.speed_x
+        elif direction.lower() == 'left':
+            self.x -= self.speed_x
 
-pygame.quit()
+    def moving_y(self, direction: str = 'down'):
+        if direction.lower() == 'down':
+            self.y += self.speed_y
+        elif direction.lower() == 'up':
+            self.y -= self.speed_y
+
+
+class Circle():
+    def __init__(self, radius: float,
+                 x_coordinate: float, y_coordinate: float,
+                 color: tuple,
+                 speed_x: float = 0.0, speed_y: float = 0.0):
+        
+        self.radius = radius
+        
+        self.x = x_coordinate
+        self.y = y_coordinate
+    
+        self.color = color
+        
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+    
+    def moving_x(self, direction: str = 'right'):
+        if direction.lower() == 'right':
+            self.x += self.speed_x
+        elif direction.lower() == 'left':
+            self.x -= self.speed_x
+
+    def moving_y(self, direction: str = 'down'):
+        if direction.lower() == 'down':
+            self.y += self.speed_y
+        elif direction.lower() == 'up':
+            self.y -= self.speed_y
+
+rectangle = Rectangle(10, 100, 200, 490, (245, 80, 80), 1.7, 0.0)
+circle = Circle(15, random.randint(15, GAME_W - 15), 250, (248, 244, 234), 0.1, 0.05)
+
+
+def main (GAME_W, GAME_H, rectangle, circle):
+    game(GAME_W, GAME_H, rectangle, circle)
+
+
+def main_menu():
+    pass
+
+
+def options():
+    pass
+
+
+def game(GAME_W, GAME_H, rectangle, circle):
+    pygame.mixer.music.load('src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
+    pygame.mixer.music.play()
+
+    pygame.key.set_repeat(1, 5)
+
+    running = True
+    while running:
+        SCREEN.fill((25, 25, 25))
+        # Increase difficulty over time
+        circle.speed_y *= 1.000075
+        rectangle.speed_x *= 1.000025
+        
+        # Collision
+        rect_collision_start_X = rectangle.x
+        rect_collision_end_X = rectangle.x + rectangle.width
+        
+        # Game control
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    if rectangle.x > 0:
+                        rectangle.moving_x(direction='left')
+                if event.key == pygame.K_RIGHT:
+                    if rectangle.x < (GAME_W - rectangle.width):
+                        rectangle.moving_x(direction='right')
+        
+        # Ball movement in x direction
+        circle.moving_x(direction='right')
+        if circle.x > (GAME_W - circle.radius):
+            circle.speed_x = -(circle.speed_x)
+        elif circle.x < circle.radius:
+            circle.speed_x = -(circle.speed_x)
+            
+        # Ball movement in y direction
+        circle.moving_y(direction='down')
+        if circle.y > (GAME_H - circle.radius - rectangle.height):
+            if circle.x >= rect_collision_start_X and circle.x <= rect_collision_end_X:
+                circle.speed_y = -(circle.speed_y)
+            else: break
+        elif circle.y < circle.radius:
+            circle.speed_y = -(circle.speed_y)
+            
+        pygame.draw.circle(SCREEN, circle.color, (circle.x, circle.y), circle.radius)
+        
+        pygame.draw.rect(SCREEN, rectangle.color, (rectangle.x, rectangle.y, rectangle.width, rectangle.height))
+        
+        pygame.display.update()
+
+    pygame.quit()
+
+
+def credits():
+    pass
+
+
+if __name__ == '__main__':
+    main(GAME_W, GAME_H, rectangle, circle)
