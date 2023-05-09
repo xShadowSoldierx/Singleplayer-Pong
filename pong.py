@@ -10,9 +10,10 @@ SCREEN = pygame.display.set_mode([GAME_W, GAME_H], flags=pygame.SCALED, vsync=1)
 FPS = 60
 FONT = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 20)
 
-# pygame.key.set_repeat(1, 5)
-
 clock = pygame.time.Clock()
+
+FILE = os.path.abspath(__file__)
+PATH = os.path.dirname(FILE)
 
 
 # class Button():
@@ -120,10 +121,10 @@ def main ():
 
 def main_menu():
     pygame.mixer.music.unload()
-    pygame.mixer.music.load('src/sounds/8_Bit_Menu_-_David_Renda.mp3')
+    pygame.mixer.music.load(f'{PATH}/src/sounds/8_Bit_Menu_-_David_Renda.mp3')
     pygame.mixer.music.play()
     
-    title_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 80)
+    title_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 80)
     title_text = title_font.render(f'PONG', False, (248, 244, 234))
     
     title_text_rect = title_text.get_rect()
@@ -136,7 +137,7 @@ def main_menu():
     play_btn_text_rect = play_btn_text.get_rect()
     play_btn_text_rect.center = (GAME_W // 2, GAME_H // 2 + 55)
     
-    control_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 10)
+    control_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 10)
     control_text = control_font.render('Press any key to start the game!', False, (248, 244, 234))
     
     control_text_rect = control_text.get_rect()
@@ -173,7 +174,7 @@ def options():
 
 def game():
     pygame.mixer.music.unload()
-    pygame.mixer.music.load('src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
+    pygame.mixer.music.load(f'{PATH}/src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
     pygame.mixer.music.play()
     
     paddle = Rectangle(10, 100, 200, 490, (245, 80, 80), 4, 0) # 1.7
@@ -237,7 +238,7 @@ def game():
 def game_over(score):
     # pygame.mixer.music.fadeout(4500)
     
-    control_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 10)
+    control_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 10)
     game_over_text = FONT.render(f'Game Over!', False, (248, 244, 234))
     score_text = FONT.render(f'Your score was {score}.', False, (248, 244, 234))
     control_m_text = control_font.render('[M] main menu', False, (248, 244, 234))
