@@ -1,6 +1,6 @@
-import pygame
 import os
 import random
+import pygame
 
 
 pygame.init()
@@ -185,6 +185,7 @@ def game():
     running = True
     while running:
         SCREEN.fill((25, 25, 25))
+        
         # Increase difficulty over time
         circle.speed_y *= 1.00275
         paddle.speed_x *= 1.0015 # 1.000025
