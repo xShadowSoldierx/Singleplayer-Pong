@@ -140,11 +140,12 @@ def main_menu():
     while running:
         SCREEN.fill((25,25,25))
         
+        # Game control
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
                 return game()
         
         # play_btn_2.create_button()
@@ -154,7 +155,7 @@ def main_menu():
 
         pygame.display.update()
                 
-        clock.tick(60)
+        clock.tick(600)
 
 
 def options():
@@ -220,26 +221,44 @@ def game():
         
         clock.tick(60)
     
-    return credits(score)
+    return game_over(score)
 
 
-def credits(score):
+def game_over(score):
     pygame.mixer.music.fadeout(4500)
     SCREEN.fill((25, 25, 25))
+    control_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 10)
     game_over_text = FONT.render(f'Game Over!', False, (248, 244, 234))
     score_text = FONT.render(f'Your score was {score}.', False, (248, 244, 234))
+    control_m_text = control_font.render('[M] main menu', False, (248, 244, 234))
+    control_esc_text = control_font.render('[Esc] close', False, (248, 244, 234))
     
     game_over_rect = game_over_text.get_rect()
     game_over_rect.center = (GAME_W // 2, GAME_H // 2 - 50)
     
     score_text_rect = score_text.get_rect()
     score_text_rect.center = (GAME_W // 2, GAME_H // 2 + 50)
+    
+    control_m_text_rect = control_m_text.get_rect()
+    control_m_text_rect.top = (GAME_H - 30)
+    control_m_text_rect.left = 20
+    
+    control_esc_text_rect = control_esc_text.get_rect()
+    control_esc_text_rect.top = (GAME_H - 30)
+    control_esc_text_rect.left = (GAME_W - control_esc_text_rect.width - 20)
+    
     SCREEN.blit(game_over_text, game_over_rect)
     SCREEN.blit(score_text, score_text_rect)
+    SCREEN.blit(control_m_text, control_m_text_rect)
+    SCREEN.blit(control_esc_text, control_esc_text_rect)
     pygame.display.update()
     pygame.time.wait(5000)
     
     pygame.quit()
+    
+
+def credits():
+    pass
 
 
 if __name__ == '__main__':
