@@ -6,10 +6,11 @@ import random
 pygame.init()
 GAME_W = 500
 GAME_H = 500
-SCREEN = pygame.display.set_mode([GAME_W, GAME_H])
+SCREEN = pygame.display.set_mode([GAME_W, GAME_H], flags=pygame.SCALED, vsync=1)
+FPS = 60
 FONT = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 20)
 
-pygame.key.set_repeat(1, 5)
+# pygame.key.set_repeat(1, 5)
 
 clock = pygame.time.Clock()
 
@@ -118,6 +119,7 @@ def main ():
 
 
 def main_menu():
+    pygame.mixer.music.unload()
     pygame.mixer.music.load('src/sounds/8_Bit_Menu_-_David_Renda.mp3')
     pygame.mixer.music.play()
     
@@ -125,15 +127,21 @@ def main_menu():
     title_text = title_font.render(f'PONG', False, (248, 244, 234))
     
     title_text_rect = title_text.get_rect()
-    title_text_rect.center = (GAME_W // 2, GAME_H // 2 - 50)
+    title_text_rect.center = (GAME_W // 2, GAME_H // 2 - 70)
     
-    play_btn = Rectangle(50, 200, 150, GAME_H // 2 + 50, (245, 80, 80))
+    play_btn = Rectangle(50, 200, 150, GAME_H // 2 + 30, (245, 80, 80))
     
     play_btn_text = FONT.render(f'PLAY', False, (248, 244, 234))
     
     play_btn_text_rect = play_btn_text.get_rect()
-    play_btn_text_rect.center = (GAME_W // 2, GAME_H // 2 + 75)
+    play_btn_text_rect.center = (GAME_W // 2, GAME_H // 2 + 55)
     
+    control_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 10)
+    control_text = control_font.render('Press any key to start the game!', False, (248, 244, 234))
+    
+    control_text_rect = control_text.get_rect()
+    control_text_rect.center = (GAME_W // 2, GAME_H - 100)
+        
     # play_btn_2 = Button(300, 100, 'Test')
     
     running = True
@@ -152,10 +160,11 @@ def main_menu():
         SCREEN.blit(title_text, title_text_rect)        
         pygame.draw.rect(SCREEN, play_btn.color, (play_btn.x, play_btn.y, play_btn.width, play_btn.height))
         SCREEN.blit(play_btn_text, play_btn_text_rect)
+        SCREEN.blit(control_text, control_text_rect)
 
         pygame.display.update()
                 
-        clock.tick(600)
+        clock.tick(FPS)
 
 
 def options():
@@ -163,10 +172,11 @@ def options():
 
 
 def game():
+    pygame.mixer.music.unload()
     pygame.mixer.music.load('src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
     pygame.mixer.music.play()
     
-    paddle = Rectangle(10, 100, 200, 490, (245, 80, 80), 1.7, 0)
+    paddle = Rectangle(10, 100, 200, 490, (245, 80, 80), 4, 0) # 1.7
     circle = Circle(15, random.randint(15, GAME_W - 15), 250, (248, 244, 234), 6, 3)
 
     score = 0
@@ -176,25 +186,25 @@ def game():
         SCREEN.fill((25, 25, 25))
         # Increase difficulty over time
         circle.speed_y *= 1.00275
-        paddle.speed_x *= 1.000025
+        paddle.speed_x *= 1.0015 # 1.000025
         
         # Collision
-        rect_collision_start_X = paddle.x
-        rect_collision_end_X = paddle.x + paddle.width
+        paddle_collision_start_X = paddle.x
+        paddle_collision_end_X = paddle.x + paddle.width
         
         # Game control
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    if paddle.x > 0:
-                        paddle.moving_x(direction='left')
-                if event.key == pygame.K_RIGHT:
-                    if paddle.x < (GAME_W - paddle.width):
-                        paddle.moving_x(direction='right')
-        
+         if event.type == pygame.QUIT:
+             running = False
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            if paddle.x > 0:
+                paddle.moving_x(direction='left')
+        if keys[pygame.K_RIGHT]:
+            if paddle.x < (GAME_W - paddle.width):
+                paddle.moving_x(direction='right')
+
         # Ball movement in x direction
         circle.moving_x(direction='right')
         if circle.x > (GAME_W - circle.radius):
@@ -205,7 +215,7 @@ def game():
         # Ball movement in y direction
         circle.moving_y(direction='down')
         if circle.y > (GAME_H - circle.radius - paddle.height):
-            if circle.x >= rect_collision_start_X and circle.x <= rect_collision_end_X:
+            if circle.x >= paddle_collision_start_X and circle.x <= paddle_collision_end_X:
                 circle.speed_y = -(circle.speed_y)
                 score += 1
             else:
@@ -219,14 +229,14 @@ def game():
         
         pygame.display.update()
         
-        clock.tick(60)
+        clock.tick(FPS)
     
     return game_over(score)
 
 
 def game_over(score):
-    pygame.mixer.music.fadeout(4500)
-    SCREEN.fill((25, 25, 25))
+    # pygame.mixer.music.fadeout(4500)
+    
     control_font = pygame.font.Font(os.path.join('src', 'fonts', 'PressStart2P-Regular.ttf'), 10)
     game_over_text = FONT.render(f'Game Over!', False, (248, 244, 234))
     score_text = FONT.render(f'Your score was {score}.', False, (248, 244, 234))
@@ -247,15 +257,31 @@ def game_over(score):
     control_esc_text_rect.top = (GAME_H - 30)
     control_esc_text_rect.left = (GAME_W - control_esc_text_rect.width - 20)
     
-    SCREEN.blit(game_over_text, game_over_rect)
-    SCREEN.blit(score_text, score_text_rect)
-    SCREEN.blit(control_m_text, control_m_text_rect)
-    SCREEN.blit(control_esc_text, control_esc_text_rect)
-    pygame.display.update()
-    pygame.time.wait(5000)
-    
-    pygame.quit()
-    
+    running = True
+    while running:
+        SCREEN.fill((25, 25, 25))
+        
+        # Game control
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_m:
+                    return main_menu()
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    pygame.quit
+        
+        SCREEN.blit(game_over_text, game_over_rect)
+        SCREEN.blit(score_text, score_text_rect)
+        SCREEN.blit(control_m_text, control_m_text_rect)
+        SCREEN.blit(control_esc_text, control_esc_text_rect)
+        
+        pygame.display.update()
+        
+        clock.tick(FPS)    
+
 
 def credits():
     pass
