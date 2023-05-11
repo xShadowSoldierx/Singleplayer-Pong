@@ -1,6 +1,9 @@
 import os
 import random
+import sys
 import pygame
+
+from Button import *
 
 
 pygame.init()
@@ -14,46 +17,6 @@ clock = pygame.time.Clock()
 
 FILE = os.path.abspath(__file__)
 PATH = os.path.dirname(FILE)
-
-
-# class Button():
-#     btn_color = (255, 0, 0)
-#     hovor_color = (0, 255, 0)
-#     click_color = (0, 0, 255)
-#     font_color = (255, 255, 255)
-    
-#     height = 50
-#     width = 100
-    
-#     def __init__(self, x_coordinate: float, y_coordinate: float, text: str):
-#         self.x = x_coordinate
-#         self.y = y_coordinate
-#         self.text = text
-        
-#     def create_button(self):
-#         global clicked
-#         action = False
-        
-#         mouse_position = pygame.mouse.get_pos()
-        
-#         button_rectangle = pygame.Rect(self.x, self.y, self.height, self.width)
-        
-#         if button_rectangle.collidepoint(mouse_position):
-#             if pygame.mouse.get_pressed()[0] ==  1:
-#                 clicked = True
-#                 pygame.draw.rect(SCREEN, self.click_color, button_rectangle)
-#             elif pygame.mouse.get_pressed()[0] == 0 and clicked:
-#                 clicked == False
-#                 action = True
-#             else:
-#                 pygame.draw.rect(SCREEN, self.hover_color, button_rectangle)
-#         else:
-#             pygame.draw.rect(SCREEN, self.btn_color, button_rectangle)
-            
-#         btn_text = FONT.render(self.text, False, self.font_color)
-#         btn_text_length = btn_text.get_width()
-#         SCREEN.blit(btn_text, self.x + self.width / 2 - btn_text_length / 2, self.y + 5)
-#         return action
 
 
 class Rectangle():
@@ -129,13 +92,8 @@ def main_menu():
     
     title_text_rect = title_text.get_rect()
     title_text_rect.center = (GAME_W // 2, GAME_H // 2 - 70)
-    
-    play_btn = Rectangle(50, 200, 150, GAME_H // 2 + 30, (245, 80, 80))
-    
-    play_btn_text = FONT.render(f'PLAY', False, (248, 244, 234))
-    
-    play_btn_text_rect = play_btn_text.get_rect()
-    play_btn_text_rect.center = (GAME_W // 2, GAME_H // 2 + 55)
+        
+    play_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 + 30), 'Play', FONT, (245, 80, 80), (248, 244, 234), (148,0,0), antialiasing=False)
     
     control_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 10)
     control_text = control_font.render('Press any key to start the game!', False, (248, 244, 234))
@@ -143,7 +101,6 @@ def main_menu():
     control_text_rect = control_text.get_rect()
     control_text_rect.center = (GAME_W // 2, GAME_H - 100)
         
-    # play_btn_2 = Button(300, 100, 'Test')
     
     running = True
     while running:
@@ -152,15 +109,14 @@ def main_menu():
         # Game control
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
                 pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
                 return game()
         
-        # play_btn_2.create_button()
         SCREEN.blit(title_text, title_text_rect)        
-        pygame.draw.rect(SCREEN, play_btn.color, (play_btn.x, play_btn.y, play_btn.width, play_btn.height))
-        SCREEN.blit(play_btn_text, play_btn_text_rect)
+        play_btn.draw()
+        play_btn.click(game)
         SCREEN.blit(control_text, control_text_rect)
 
         pygame.display.update()
@@ -197,7 +153,8 @@ def game():
         # Game control
         for event in pygame.event.get():
          if event.type == pygame.QUIT:
-             running = False
+             pygame.quit()
+             sys.exit()
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -266,14 +223,14 @@ def game_over(score):
         # Game control
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
                 pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
                     return main_menu()
                 if event.key == pygame.K_ESCAPE:
-                    running = False
-                    pygame.quit
+                    pygame.quit()
+                    sys.exit()
         
         SCREEN.blit(game_over_text, game_over_rect)
         SCREEN.blit(score_text, score_text_rect)
