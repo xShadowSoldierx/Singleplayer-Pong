@@ -8,8 +8,6 @@ class Button():
                  hover_color: str | tuple = None, content_hover_color: str | tuple = None,
                  antialiasing:bool = True, border_radius: int = 0):
         
-        self.content = content
-        
         # Core
         self.main_window = main_window
 
