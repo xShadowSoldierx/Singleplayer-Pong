@@ -35,7 +35,7 @@ class Button():
         pygame.draw.rect(self.main_window, self.button_color, self.button_rect, border_radius = self.border_radius)
         self.main_window.blit(self.content_surf, self.content_rect)
 
-    def click(self, func):
+    def click(self, func, *args, **kwargs):
         mouse_position = pygame.mouse.get_pos()
         if self.button_rect.collidepoint(mouse_position):
             if self.button_hover_color:
@@ -45,7 +45,7 @@ class Button():
             if pygame.mouse.get_pressed()[0]:
                 self.pressed = True
             elif self.pressed:
-                func()
+                func(*args, **kwargs)
                 self.pressed = False
         else:
             self.button_color = self.button_default_color
