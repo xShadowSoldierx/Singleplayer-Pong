@@ -1,6 +1,6 @@
 import pygame
 
-class Button():    
+class Button(object):    
     def __init__(self, main_window: object,
                  width: float, height: float, position: tuple,
                  content: str, font: object,
