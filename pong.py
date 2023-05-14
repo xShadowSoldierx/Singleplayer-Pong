@@ -112,11 +112,11 @@ def main_menu():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                return game()
+                return countdown()
         
         SCREEN.blit(title_text, title_text_rect)        
         play_btn.draw()
-        play_btn.click(game)
+        play_btn.click(countdown)
         SCREEN.blit(control_text, control_text_rect)
 
         pygame.display.update()
@@ -128,11 +128,45 @@ def options():
     pass
 
 
-def game():
+def countdown():
     pygame.mixer.music.unload()
     pygame.mixer.music.load(f'{PATH}/src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
     pygame.mixer.music.play()
     
+    number = 3
+    
+    countdown_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 80)
+        
+    countdown = True
+    
+    while countdown:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+        countdown_text = countdown_font.render(f'{number}', False, (248, 244, 234))
+        countdown_text_rect = countdown_text.get_rect()
+        countdown_text_rect.center = (GAME_W // 2, GAME_H // 2)
+        
+        SCREEN.fill((25, 25, 25))
+        SCREEN.blit(countdown_text, countdown_text_rect)
+        
+        pygame.display.update()
+        
+        if number == 'GO!':
+            pygame.time.wait(500)
+            return game()
+        else:
+            number -= 1
+        
+        if number == 0:
+            number = 'GO!'
+        
+        clock.tick(1.5)
+
+
+def game():
     paddle = Rectangle(10, 100, 200, 490, (245, 80, 80), 4, 0) # 1.7
     circle = Circle(15, random.randint(15, GAME_W - 15), 250, (248, 244, 234), 6, 3)
 
@@ -142,9 +176,9 @@ def game():
     while running:
         SCREEN.fill((25, 25, 25))
         
-        # Increase difficulty over time
+        # Acceleration
         circle.speed_y *= 1.00275
-        paddle.speed_x *= 1.0015 # 1.000025
+        paddle.speed_x *= 1.0015
         
         # Collision
         paddle_collision_start_X = paddle.x
@@ -194,8 +228,6 @@ def game():
 
 
 def game_over(score):
-    # pygame.mixer.music.fadeout(4500)
-    
     control_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 10)
     game_over_text = FONT.render(f'Game Over!', False, (248, 244, 234))
     score_text = FONT.render(f'Your score was {score}.', False, (248, 244, 234))
