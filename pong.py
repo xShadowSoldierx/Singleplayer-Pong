@@ -3,7 +3,9 @@ import random
 import sys
 import pygame
 
-from Button import *
+from button import *
+from circle import *
+from rectangle import *
 
 
 pygame.init()
@@ -18,65 +20,6 @@ clock = pygame.time.Clock()
 
 FILE = os.path.abspath(__file__)
 PATH = os.path.dirname(FILE)
-
-
-class Rectangle():
-    def __init__(self, height: float, width: float,
-                 x_coordinate: float, y_coordinate: float,
-                 color: tuple,
-                 speed_x: float = 0.0, speed_y: float = 0.0):
-        
-        self.height = height
-        self.width = width
-        
-        self.x = x_coordinate
-        self.y = y_coordinate
-        
-        self.color = color
-        
-        self.speed_x = speed_x
-        self.speed_y = speed_y
-    
-    def moving_x(self, direction: str = 'right'):
-        if direction.lower() == 'right':
-            self.x += self.speed_x
-        elif direction.lower() == 'left':
-            self.x -= self.speed_x
-
-    def moving_y(self, direction: str = 'down'):
-        if direction.lower() == 'down':
-            self.y += self.speed_y
-        elif direction.lower() == 'up':
-            self.y -= self.speed_y
-
-
-class Circle():
-    def __init__(self, radius: float,
-                 x_coordinate: float, y_coordinate: float,
-                 color: tuple,
-                 speed_x: float = 0, speed_y: float = 0):
-        
-        self.radius = radius
-        
-        self.x = x_coordinate
-        self.y = y_coordinate
-    
-        self.color = color
-        
-        self.speed_x = speed_x
-        self.speed_y = speed_y
-    
-    def moving_x(self, direction: str = 'right'):
-        if direction.lower() == 'right':
-            self.x += self.speed_x
-        elif direction.lower() == 'left':
-            self.x -= self.speed_x
-
-    def moving_y(self, direction: str = 'down'):
-        if direction.lower() == 'down':
-            self.y += self.speed_y
-        elif direction.lower() == 'up':
-            self.y -= self.speed_y
 
 
 def main ():
@@ -132,13 +75,15 @@ def options():
     
     options_font = pygame.font.Font(f'{PATH}/src/fonts/PressStart2P-Regular.ttf', 45)
     options_text = options_font.render(f'DIFFICULTY', False, (248, 244, 234))
-    
     options_text_rect = options_text.get_rect()
     options_text_rect.center = (GAME_W // 2, GAME_H // 2 - 100)
         
-    easy_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 - 20), 'Easy', FONT, (60,179,113), (248, 244, 234), (107,142,35), antialiasing=False)
-    medium_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 + 40), 'Medium', FONT, (255, 165, 0), (248, 244, 234), (255,127,80), antialiasing=False)
-    hard_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 + 100), 'Hard', FONT, (245, 80, 80), (248, 244, 234), (148, 0, 0), antialiasing=False)
+    easy_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 - 20), 'Easy', FONT,
+                      (60,179,113), (248, 244, 234), (107,142,35), antialiasing=False)
+    medium_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 + 40), 'Medium', FONT,
+                        (255, 165, 0), (248, 244, 234), (255,127,80), antialiasing=False)
+    hard_btn = Button(SCREEN, 200, 50, (150, GAME_H // 2 + 100), 'Hard', FONT,
+                      (245, 80, 80), (248, 244, 234), (148, 0, 0), antialiasing=False)
     
     
     running = True
@@ -174,10 +119,12 @@ def countdown(difficulty):
                 pygame.display.set_caption('Pong - Easy mode')
                 pygame.mixer.music.load(f'{PATH}/src/sounds/Retro_Platforming_-_David_Fesliyan.mp3')
                 pygame.mixer.music.play(loops=-1)
+
             case 'medium':
                 pygame.display.set_caption('Pong - Medium mode')
                 pygame.mixer.music.load(f'{PATH}/src/sounds/A_Bit_Of_Hope_-_David_Fesliyan.mp3')
                 pygame.mixer.music.play(loops=-1)
+
             case 'hard':
                 pygame.display.set_caption('Pong - Hard mode')
                 pygame.mixer.music.load(f'{PATH}/src/sounds/Boss_Time_-_David_Renda.mp3')
@@ -204,7 +151,6 @@ def countdown(difficulty):
         SCREEN.blit(countdown_text, countdown_text_rect)
         
         pygame.display.update()
-        
         
         if number == 'GO!':
             pygame.time.wait(500)
@@ -239,7 +185,6 @@ def game(difficulty):
         SCREEN.fill((25, 25, 25))
         
         score_text = hud_font.render(f'Score: {score}', False, (248, 244, 234))
-    
         score_text_rect = score_text.get_rect()
         score_text_rect.left = 10
         score_text_rect.top = 10
@@ -290,9 +235,7 @@ def game(difficulty):
             circle.speed_y = -(circle.speed_y)
             
         pygame.draw.circle(SCREEN, circle.color, (circle.x, circle.y), circle.radius)
-        
         pygame.draw.rect(SCREEN, paddle.color, (paddle.x, paddle.y, paddle.width, paddle.height))
-        
         SCREEN.blit(score_text, score_text_rect)
         SCREEN.blit(difficulty_text, difficulty_text_rect)
         
