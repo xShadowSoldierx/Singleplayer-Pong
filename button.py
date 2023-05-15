@@ -10,6 +10,9 @@ class Button(object):
         
         # Core
         self.main_window = main_window
+        self.content = content
+        self.font = font
+        self.antialiasing = antialiasing
 
         # Button
         self.button_default_color = button_color
@@ -23,7 +26,7 @@ class Button(object):
         self.content_default_color = content_color
         self.content_color = content_color
         self.content_hover_color = content_hover_color
-        self.content_surf = font.render(content, antialiasing, self.content_color)
+        self.content_surf = self.font.render(self.content, self.antialiasing, self.content_color)
         self.content_rect = self.content_surf.get_rect(center = self.button_rect.center)
 
         # Interactions
@@ -40,6 +43,7 @@ class Button(object):
                 self.button_color = self.button_hover_color
             if self.content_hover_color:
                 self.content_color = self.content_hover_color
+                self.content_surf = self.font.render(self.content, self.antialiasing, self.content_color)
             if pygame.mouse.get_pressed()[0]:
                 self.pressed = True
             elif self.pressed:
@@ -47,4 +51,5 @@ class Button(object):
                 self.pressed = False
         else:
             self.button_color = self.button_default_color
-            self.content_hover_color = self.content_default_color
+            self.content_color = self.content_default_color
+            self.content_surf = self.font.render(self.content, self.antialiasing, self.content_color)
