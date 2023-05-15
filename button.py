@@ -10,9 +10,6 @@ class Button(object):
         
         # Core
         self.main_window = main_window
-        self.content = content
-        self.font = font
-        self.antialiasing = antialiasing
 
         # Button
         self.button_default_color = button_color
@@ -23,6 +20,10 @@ class Button(object):
         self.border_radius = border_radius
 
         # Content
+        self.content = content
+        self.font = font
+        self.antialiasing = antialiasing
+
         self.content_default_color = content_color
         self.content_color = content_color
         self.content_hover_color = content_hover_color
